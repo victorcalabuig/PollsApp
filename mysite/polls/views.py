@@ -41,8 +41,16 @@ def detail(request, question_id):
 
 
 def results(request, question_id):
-	response = "You're looking at the results of question %s." 
-	return HttpResponse(response % question_id)
+	question = get_object_or_404(Question, pk=question_id)
+	choice_list = question.choice_set.all()
+	return render(request, 'polls/results.html', {'choice_list': choice_list})
+
+
+	"""response = "You're looking at the results of question %s." 
+	return HttpResponse(response % question_id)2"""
 
 def vote(request, question_id):
-	return HttpResponse("You're voting on question %s." % question_id)
+
+
+
+	"""return HttpResponse("You're voting on question %s." % question_id)"""

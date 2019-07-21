@@ -1,0 +1,9 @@
+{% if choice_list %}
+	<ul>
+		{% for choice in choice_list %}
+			<li>{{ choice.choice_text}}  {{choice.votes}}</li>
+		{% endfor %}
+	</ul>
+{% else %}
+	<p>No choices are available</p>
+{% endif %}

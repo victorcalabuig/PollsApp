@@ -4,3 +4,5 @@
     <li>{{ choice.choice_text }}</li>
 {% endfor %}
 </ul>
+
+<p><a href="{% url 'polls:results' question.id %}">See results</a></p>
