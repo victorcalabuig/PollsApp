@@ -14,6 +14,31 @@ from .models import Question, Choice
 
 
 # Create your views here.
+def only_reps(numbers):
+	"""
+	takes a list of numbers as an argument and returns
+	a new list containing only the numbers that appear 
+	more than once
+	"""
+	answer = []
+	start = 0
+	for a in numbers:
+		start += 1
+		for b in numbers[start:]:
+			if (a == b and a not in answer):
+				answer.append(a)
+	return answer
+
+
+def questions_with_2_plus_choices(self):
+	"""
+	Creates a list that contains the id´s of 
+	questions which have 2 or more choices.
+	"""
+	q_ids = []
+	for choice in Choice.objects.all():
+		q_ids.append(choice.question_id)
+	return only_reps(q_ids)
 
 
 class IndexView(generic.ListView):
@@ -21,9 +46,11 @@ class IndexView(generic.ListView):
 	context_object_name = 'latest_question_list'
 
 	def get_queryset(self):
+		question_ids = questions_with_2_plus_choices(self)
 		return Question.objects.filter(
 			pub_date__lte=timezone.now()
-			).order_by('-pub_date')[:5]
+			).filter(id__in=question_ids).order_by(
+			'-pub_date')[:5]
 
 
 
@@ -35,7 +62,12 @@ class DetailView(generic.DetailView):
 		"""
 		Excludes any questions that aren't published yet.
 		"""
-		return Question.objects.filter(pub_date__lte=timezone.now())
+		question_ids = []
+		for choice in Choice.objects.all():
+			question_ids.append(choice.question_id)
+		return Question.objects.filter(
+			pub_date__lte=timezone.now()).filter(
+			id__in=question_ids)	
 
 
 
@@ -45,9 +77,15 @@ class ResultsView(generic.DetailView):
 	template_name = 'polls/results.html'
 	def get_queryset(self):
 		"""
-		Exclude questions that aren't published yet.
+		Exclude questions that aren't published yet and that 
+		have no choices.
 		"""
-		return Question.objects.filter(pub_date__lte=timezone.now())
+		question_ids = []
+		for choice in Choice.objects.all():
+			question_ids.append(choice.question_id)
+		return Question.objects.filter(
+			pub_date__lte=timezone.now()).filter(
+			id__in=question_ids)
 
 
 
