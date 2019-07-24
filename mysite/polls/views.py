@@ -46,6 +46,10 @@ class IndexView(generic.ListView):
 	context_object_name = 'latest_question_list'
 
 	def get_queryset(self):
+		"""
+		Excludes questions with future publication dates, 
+		and those with less than 1 choice.
+		"""
 		question_ids = questions_with_2_plus_choices(self)
 		return Question.objects.filter(
 			pub_date__lte=timezone.now()
@@ -60,11 +64,10 @@ class DetailView(generic.DetailView):
 	template_name = 'polls/detail.html'
 	def get_queryset(self):
 		"""
-		Excludes any questions that aren't published yet.
+		Excludes questions with future publication dates, 
+		and those with less than 1 choice.
 		"""
-		question_ids = []
-		for choice in Choice.objects.all():
-			question_ids.append(choice.question_id)
+		question_ids = questions_with_2_plus_choices(self)
 		return Question.objects.filter(
 			pub_date__lte=timezone.now()).filter(
 			id__in=question_ids)	
@@ -80,9 +83,7 @@ class ResultsView(generic.DetailView):
 		Exclude questions that aren't published yet and that 
 		have no choices.
 		"""
-		question_ids = []
-		for choice in Choice.objects.all():
-			question_ids.append(choice.question_id)
+		question_ids = questions_with_2_plus_choices(self)
 		return Question.objects.filter(
 			pub_date__lte=timezone.now()).filter(
 			id__in=question_ids)
