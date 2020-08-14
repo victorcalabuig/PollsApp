@@ -15,4 +15,10 @@ urlpatterns = [
 
 	# ex: /polls/5/vote
 	path('<int:question_id>/vote/', views.vote, name='vote'),
+
+	path('extra/', views.extra, name='extra'),
+
+	path('answer/', views.answer, name='answer'),
+	path('session/', views.session, name='session'),
+	path('random/', views.random, name='random')
 ]

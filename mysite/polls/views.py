@@ -109,6 +109,26 @@ def vote(request, question_id):
         # user hits the Back button.
 	return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
+# These extra views are for testing cookies and session stuf.
+def extra(request):
+	return render(request, 'polls/extra.html')
+
+def answer(request):
+	favorite_color = request.GET['favorite_color']
+	context = {
+		'favorite_color': favorite_color,
+	}
+	request.session['favorite_color'] = favorite_color
+	return render(request, 'polls/answer.html', context)
+
+def session(request):
+	favorite_color = request.session['favorite_color']
+	return HttpResponse("Your favorite color is %s" % favorite_color)
+
+def random(request):
+	favorite_color = request.session['favorite_color']
+	return HttpResponse("Your favorite color is %s" % favorite_color)
+
 
 
 
